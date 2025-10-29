@@ -1,4 +1,4 @@
 # openqueue
 
 
-HTTP Target Queue
+HTTP Target Task Queue
