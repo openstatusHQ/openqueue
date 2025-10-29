@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package openqueue.v1;
+
+
+service QueueService {
+  rpc Push (PushRequest) returns (PushResponse) {}
+}
+
+
+message PushRequest {}
+message PushResponse {}
