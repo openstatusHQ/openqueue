@@ -2,8 +2,9 @@ syntax = "proto3";
 
 package openqueue.v1;
 
+option go_package = "github.com/openstatushq/openqueue/proto/gen/api/v1;api";
 
-service QueueService {
+service Api {
   rpc Push (PushRequest) returns (PushResponse) {}
 }
 

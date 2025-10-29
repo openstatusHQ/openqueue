@@ -2,9 +2,9 @@
 // versions:
 // 	protoc-gen-go v1.36.10
 // 	protoc        (unknown)
-// source: openqueue/v1/openqueue.proto
+// source: api/v1/api.proto
 
-package openqueuev1
+package api
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -29,7 +29,7 @@ type PushRequest struct {
 
 func (x *PushRequest) Reset() {
 	*x = PushRequest{}
-	mi := &file_openqueue_v1_openqueue_proto_msgTypes[0]
+	mi := &file_api_v1_api_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -41,7 +41,7 @@ func (x *PushRequest) String() string {
 func (*PushRequest) ProtoMessage() {}
 
 func (x *PushRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_openqueue_v1_openqueue_proto_msgTypes[0]
+	mi := &file_api_v1_api_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -54,7 +54,7 @@ func (x *PushRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PushRequest.ProtoReflect.Descriptor instead.
 func (*PushRequest) Descriptor() ([]byte, []int) {
-	return file_openqueue_v1_openqueue_proto_rawDescGZIP(), []int{0}
+	return file_api_v1_api_proto_rawDescGZIP(), []int{0}
 }
 
 type PushResponse struct {
@@ -65,7 +65,7 @@ type PushResponse struct {
 
 func (x *PushResponse) Reset() {
 	*x = PushResponse{}
-	mi := &file_openqueue_v1_openqueue_proto_msgTypes[1]
+	mi := &file_api_v1_api_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -77,7 +77,7 @@ func (x *PushResponse) String() string {
 func (*PushResponse) ProtoMessage() {}
 
 func (x *PushResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_openqueue_v1_openqueue_proto_msgTypes[1]
+	mi := &file_api_v1_api_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -90,40 +90,40 @@ func (x *PushResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PushResponse.ProtoReflect.Descriptor instead.
 func (*PushResponse) Descriptor() ([]byte, []int) {
-	return file_openqueue_v1_openqueue_proto_rawDescGZIP(), []int{1}
+	return file_api_v1_api_proto_rawDescGZIP(), []int{1}
 }
 
-var File_openqueue_v1_openqueue_proto protoreflect.FileDescriptor
+var File_api_v1_api_proto protoreflect.FileDescriptor
 
-const file_openqueue_v1_openqueue_proto_rawDesc = "" +
+const file_api_v1_api_proto_rawDesc = "" +
 	"\n" +
-	"\x1copenqueue/v1/openqueue.proto\x12\fopenqueue.v1\"\r\n" +
+	"\x10api/v1/api.proto\x12\fopenqueue.v1\"\r\n" +
 	"\vPushRequest\"\x0e\n" +
-	"\fPushResponse2O\n" +
-	"\fQueueService\x12?\n" +
-	"\x04Push\x12\x19.openqueue.v1.PushRequest\x1a\x1a.openqueue.v1.PushResponse\"\x00B\xbc\x01\n" +
-	"\x10com.openqueue.v1B\x0eOpenqueueProtoP\x01ZGgithub.com/openstatushq/openqueue/internal/gen/openqueue/v1;openqueuev1\xa2\x02\x03OXX\xaa\x02\fOpenqueue.V1\xca\x02\fOpenqueue\\V1\xe2\x02\x18Openqueue\\V1\\GPBMetadata\xea\x02\rOpenqueue::V1b\x06proto3"
+	"\fPushResponse2F\n" +
+	"\x03Api\x12?\n" +
+	"\x04Push\x12\x19.openqueue.v1.PushRequest\x1a\x1a.openqueue.v1.PushResponse\"\x00B\xa5\x01\n" +
+	"\x10com.openqueue.v1B\bApiProtoP\x01Z6github.com/openstatushq/openqueue/proto/gen/api/v1;api\xa2\x02\x03OXX\xaa\x02\fOpenqueue.V1\xca\x02\fOpenqueue\\V1\xe2\x02\x18Openqueue\\V1\\GPBMetadata\xea\x02\rOpenqueue::V1b\x06proto3"
 
 var (
-	file_openqueue_v1_openqueue_proto_rawDescOnce sync.Once
-	file_openqueue_v1_openqueue_proto_rawDescData []byte
+	file_api_v1_api_proto_rawDescOnce sync.Once
+	file_api_v1_api_proto_rawDescData []byte
 )
 
-func file_openqueue_v1_openqueue_proto_rawDescGZIP() []byte {
-	file_openqueue_v1_openqueue_proto_rawDescOnce.Do(func() {
-		file_openqueue_v1_openqueue_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_openqueue_v1_openqueue_proto_rawDesc), len(file_openqueue_v1_openqueue_proto_rawDesc)))
+func file_api_v1_api_proto_rawDescGZIP() []byte {
+	file_api_v1_api_proto_rawDescOnce.Do(func() {
+		file_api_v1_api_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_api_v1_api_proto_rawDesc), len(file_api_v1_api_proto_rawDesc)))
 	})
-	return file_openqueue_v1_openqueue_proto_rawDescData
+	return file_api_v1_api_proto_rawDescData
 }
 
-var file_openqueue_v1_openqueue_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
-var file_openqueue_v1_openqueue_proto_goTypes = []any{
+var file_api_v1_api_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_api_v1_api_proto_goTypes = []any{
 	(*PushRequest)(nil),  // 0: openqueue.v1.PushRequest
 	(*PushResponse)(nil), // 1: openqueue.v1.PushResponse
 }
-var file_openqueue_v1_openqueue_proto_depIdxs = []int32{
-	0, // 0: openqueue.v1.QueueService.Push:input_type -> openqueue.v1.PushRequest
-	1, // 1: openqueue.v1.QueueService.Push:output_type -> openqueue.v1.PushResponse
+var file_api_v1_api_proto_depIdxs = []int32{
+	0, // 0: openqueue.v1.Api.Push:input_type -> openqueue.v1.PushRequest
+	1, // 1: openqueue.v1.Api.Push:output_type -> openqueue.v1.PushResponse
 	1, // [1:2] is the sub-list for method output_type
 	0, // [0:1] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
@@ -131,26 +131,26 @@ var file_openqueue_v1_openqueue_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for field type_name
 }
 
-func init() { file_openqueue_v1_openqueue_proto_init() }
-func file_openqueue_v1_openqueue_proto_init() {
-	if File_openqueue_v1_openqueue_proto != nil {
+func init() { file_api_v1_api_proto_init() }
+func file_api_v1_api_proto_init() {
+	if File_api_v1_api_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_openqueue_v1_openqueue_proto_rawDesc), len(file_openqueue_v1_openqueue_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_v1_api_proto_rawDesc), len(file_api_v1_api_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_openqueue_v1_openqueue_proto_goTypes,
-		DependencyIndexes: file_openqueue_v1_openqueue_proto_depIdxs,
-		MessageInfos:      file_openqueue_v1_openqueue_proto_msgTypes,
+		GoTypes:           file_api_v1_api_proto_goTypes,
+		DependencyIndexes: file_api_v1_api_proto_depIdxs,
+		MessageInfos:      file_api_v1_api_proto_msgTypes,
 	}.Build()
-	File_openqueue_v1_openqueue_proto = out.File
-	file_openqueue_v1_openqueue_proto_goTypes = nil
-	file_openqueue_v1_openqueue_proto_depIdxs = nil
+	File_api_v1_api_proto = out.File
+	file_api_v1_api_proto_goTypes = nil
+	file_api_v1_api_proto_depIdxs = nil
 }
