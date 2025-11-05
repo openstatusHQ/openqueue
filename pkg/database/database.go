@@ -1,7 +1,5 @@
 package database
 
-
-
 import (
 	"fmt"
 
@@ -9,9 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 
 	_ "modernc.org/sqlite"
-
 )
-
 
 var schema = `
 CREATE TABLE IF NOT EXISTS webhook_requests (

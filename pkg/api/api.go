@@ -7,7 +7,6 @@ import (
 	"github.com/openstatushq/openqueue/pkg/api/apiv1"
 )
 
-
 func RegisterAPIs() *chi.Mux {
 
 	r := chi.NewRouter()

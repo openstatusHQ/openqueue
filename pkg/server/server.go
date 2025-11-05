@@ -2,18 +2,28 @@ package server
 
 import (
 	"context"
-	"github.com/rs/zerolog/log"
+	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	"github.com/go-chi/chi/v5"
+	"github.com/jmoiron/sqlx"
+	"github.com/rs/zerolog/log"
 )
 
-func NewServer(addr string, r *chi.Mux) {
-	server := newServer(":"+"8080", r)
+
+type Server struct {
+	port int
+
+	db *sqlx.DB
+}
+
+func  NewServer( port int) error {
+
+
+	server := newServer(port)
 
 	// Server run context
 	serverCtx, serverStopCtx := context.WithCancel(context.Background())
@@ -48,15 +58,30 @@ func NewServer(addr string, r *chi.Mux) {
 	err := server.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
 		log.Fatal().Err(err).Msg("server failed")
+		return err
 	}
 
 	// Wait for server context to be stopped
 	<-serverCtx.Done()
+
+	return nil
 }
 
-func newServer(addr string, r *chi.Mux) *http.Server {
-	return &http.Server{
-		Addr:    addr,
-		Handler: r,
+func newServer(port int) *http.Server {
+	NewServer := &Server{
+		port: port,
+
+		db: nil,
 	}
+
+	// Declare Server config
+	server := &http.Server{
+		Addr:         fmt.Sprintf(":%d", NewServer.port),
+		Handler:      NewServer.RegisterRoutes(),
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 30 * time.Second,
+	}
+
+	return server
 }
