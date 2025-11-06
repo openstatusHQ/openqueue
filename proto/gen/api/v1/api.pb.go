@@ -21,62 +21,155 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type PushRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
+type HTTPMethod int32
 
-func (x *PushRequest) Reset() {
-	*x = PushRequest{}
-	mi := &file_api_v1_api_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
+const (
+	HTTPMethod_HTTP_METHOD_UNSPECIFIED HTTPMethod = 0
+	HTTPMethod_HTTP_METHOD_GET         HTTPMethod = 1
+	HTTPMethod_HTTP_METHOD_POST        HTTPMethod = 2
+	HTTPMethod_HTTP_METHOD_PUT         HTTPMethod = 3
+	HTTPMethod_HTTP_METHOD_DELETE      HTTPMethod = 4
+	HTTPMethod_HTTP_METHOD_HEAD        HTTPMethod = 5
+	HTTPMethod_HTTP_METHOD_OPTIONS     HTTPMethod = 6
+	HTTPMethod_HTTP_METHOD_PATCH       HTTPMethod = 7
+	HTTPMethod_HTTP_METHOD_CONNECT     HTTPMethod = 8
+)
 
-func (x *PushRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*PushRequest) ProtoMessage() {}
-
-func (x *PushRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v1_api_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
+// Enum value maps for HTTPMethod.
+var (
+	HTTPMethod_name = map[int32]string{
+		0: "HTTP_METHOD_UNSPECIFIED",
+		1: "HTTP_METHOD_GET",
+		2: "HTTP_METHOD_POST",
+		3: "HTTP_METHOD_PUT",
+		4: "HTTP_METHOD_DELETE",
+		5: "HTTP_METHOD_HEAD",
+		6: "HTTP_METHOD_OPTIONS",
+		7: "HTTP_METHOD_PATCH",
+		8: "HTTP_METHOD_CONNECT",
 	}
-	return mi.MessageOf(x)
+	HTTPMethod_value = map[string]int32{
+		"HTTP_METHOD_UNSPECIFIED": 0,
+		"HTTP_METHOD_GET":         1,
+		"HTTP_METHOD_POST":        2,
+		"HTTP_METHOD_PUT":         3,
+		"HTTP_METHOD_DELETE":      4,
+		"HTTP_METHOD_HEAD":        5,
+		"HTTP_METHOD_OPTIONS":     6,
+		"HTTP_METHOD_PATCH":       7,
+		"HTTP_METHOD_CONNECT":     8,
+	}
+)
+
+func (x HTTPMethod) Enum() *HTTPMethod {
+	p := new(HTTPMethod)
+	*p = x
+	return p
 }
 
-// Deprecated: Use PushRequest.ProtoReflect.Descriptor instead.
-func (*PushRequest) Descriptor() ([]byte, []int) {
+func (x HTTPMethod) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (HTTPMethod) Descriptor() protoreflect.EnumDescriptor {
+	return file_api_v1_api_proto_enumTypes[0].Descriptor()
+}
+
+func (HTTPMethod) Type() protoreflect.EnumType {
+	return &file_api_v1_api_proto_enumTypes[0]
+}
+
+func (x HTTPMethod) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use HTTPMethod.Descriptor instead.
+func (HTTPMethod) EnumDescriptor() ([]byte, []int) {
 	return file_api_v1_api_proto_rawDescGZIP(), []int{0}
 }
 
-type PushResponse struct {
+type Task struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Url           string                 `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
+	Method        HTTPMethod             `protobuf:"varint,2,opt,name=method,proto3,enum=api.v1.HTTPMethod" json:"method,omitempty"`
+	Headers       map[string]string      `protobuf:"bytes,3,rep,name=headers,proto3" json:"headers,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *PushResponse) Reset() {
-	*x = PushResponse{}
+func (x *Task) Reset() {
+	*x = Task{}
+	mi := &file_api_v1_api_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Task) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Task) ProtoMessage() {}
+
+func (x *Task) ProtoReflect() protoreflect.Message {
+	mi := &file_api_v1_api_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Task.ProtoReflect.Descriptor instead.
+func (*Task) Descriptor() ([]byte, []int) {
+	return file_api_v1_api_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *Task) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+func (x *Task) GetMethod() HTTPMethod {
+	if x != nil {
+		return x.Method
+	}
+	return HTTPMethod_HTTP_METHOD_UNSPECIFIED
+}
+
+func (x *Task) GetHeaders() map[string]string {
+	if x != nil {
+		return x.Headers
+	}
+	return nil
+}
+
+type CreateTaskRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	QueueName     string                 `protobuf:"bytes,1,opt,name=queue_name,json=queueName,proto3" json:"queue_name,omitempty"`
+	Task          *Task                  `protobuf:"bytes,2,opt,name=task,proto3" json:"task,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateTaskRequest) Reset() {
+	*x = CreateTaskRequest{}
 	mi := &file_api_v1_api_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PushResponse) String() string {
+func (x *CreateTaskRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PushResponse) ProtoMessage() {}
+func (*CreateTaskRequest) ProtoMessage() {}
 
-func (x *PushResponse) ProtoReflect() protoreflect.Message {
+func (x *CreateTaskRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_api_v1_api_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -88,21 +181,103 @@ func (x *PushResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PushResponse.ProtoReflect.Descriptor instead.
-func (*PushResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateTaskRequest.ProtoReflect.Descriptor instead.
+func (*CreateTaskRequest) Descriptor() ([]byte, []int) {
 	return file_api_v1_api_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *CreateTaskRequest) GetQueueName() string {
+	if x != nil {
+		return x.QueueName
+	}
+	return ""
+}
+
+func (x *CreateTaskRequest) GetTask() *Task {
+	if x != nil {
+		return x.Task
+	}
+	return nil
+}
+
+type CreateTaskResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TaskId        int64                  `protobuf:"varint,1,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateTaskResponse) Reset() {
+	*x = CreateTaskResponse{}
+	mi := &file_api_v1_api_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateTaskResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateTaskResponse) ProtoMessage() {}
+
+func (x *CreateTaskResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_v1_api_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateTaskResponse.ProtoReflect.Descriptor instead.
+func (*CreateTaskResponse) Descriptor() ([]byte, []int) {
+	return file_api_v1_api_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *CreateTaskResponse) GetTaskId() int64 {
+	if x != nil {
+		return x.TaskId
+	}
+	return 0
 }
 
 var File_api_v1_api_proto protoreflect.FileDescriptor
 
 const file_api_v1_api_proto_rawDesc = "" +
 	"\n" +
-	"\x10api/v1/api.proto\x12\fopenqueue.v1\"\r\n" +
-	"\vPushRequest\"\x0e\n" +
-	"\fPushResponse2F\n" +
-	"\x03Api\x12?\n" +
-	"\x04Push\x12\x19.openqueue.v1.PushRequest\x1a\x1a.openqueue.v1.PushResponse\"\x00B\xa5\x01\n" +
-	"\x10com.openqueue.v1B\bApiProtoP\x01Z6github.com/openstatushq/openqueue/proto/gen/api/v1;api\xa2\x02\x03OXX\xaa\x02\fOpenqueue.V1\xca\x02\fOpenqueue\\V1\xe2\x02\x18Openqueue\\V1\\GPBMetadata\xea\x02\rOpenqueue::V1b\x06proto3"
+	"\x10api/v1/api.proto\x12\x06api.v1\"\xb5\x01\n" +
+	"\x04Task\x12\x10\n" +
+	"\x03url\x18\x01 \x01(\tR\x03url\x12*\n" +
+	"\x06method\x18\x02 \x01(\x0e2\x12.api.v1.HTTPMethodR\x06method\x123\n" +
+	"\aheaders\x18\x03 \x03(\v2\x19.api.v1.Task.HeadersEntryR\aheaders\x1a:\n" +
+	"\fHeadersEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"T\n" +
+	"\x11CreateTaskRequest\x12\x1d\n" +
+	"\n" +
+	"queue_name\x18\x01 \x01(\tR\tqueueName\x12 \n" +
+	"\x04task\x18\x02 \x01(\v2\f.api.v1.TaskR\x04task\"-\n" +
+	"\x12CreateTaskResponse\x12\x17\n" +
+	"\atask_id\x18\x01 \x01(\x03R\x06taskId*\xe0\x01\n" +
+	"\n" +
+	"HTTPMethod\x12\x1b\n" +
+	"\x17HTTP_METHOD_UNSPECIFIED\x10\x00\x12\x13\n" +
+	"\x0fHTTP_METHOD_GET\x10\x01\x12\x14\n" +
+	"\x10HTTP_METHOD_POST\x10\x02\x12\x13\n" +
+	"\x0fHTTP_METHOD_PUT\x10\x03\x12\x16\n" +
+	"\x12HTTP_METHOD_DELETE\x10\x04\x12\x14\n" +
+	"\x10HTTP_METHOD_HEAD\x10\x05\x12\x17\n" +
+	"\x13HTTP_METHOD_OPTIONS\x10\x06\x12\x15\n" +
+	"\x11HTTP_METHOD_PATCH\x10\a\x12\x17\n" +
+	"\x13HTTP_METHOD_CONNECT\x10\b2U\n" +
+	"\fQueueService\x12E\n" +
+	"\n" +
+	"CreateTask\x12\x19.api.v1.CreateTaskRequest\x1a\x1a.api.v1.CreateTaskResponse\"\x00B\x87\x01\n" +
+	"\n" +
+	"com.api.v1B\bApiProtoP\x01Z6github.com/openstatushq/openqueue/proto/gen/api/v1;api\xa2\x02\x03AXX\xaa\x02\x06Api.V1\xca\x02\x06Api\\V1\xe2\x02\x12Api\\V1\\GPBMetadata\xea\x02\aApi::V1b\x06proto3"
 
 var (
 	file_api_v1_api_proto_rawDescOnce sync.Once
@@ -116,19 +291,26 @@ func file_api_v1_api_proto_rawDescGZIP() []byte {
 	return file_api_v1_api_proto_rawDescData
 }
 
-var file_api_v1_api_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_api_v1_api_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_api_v1_api_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_api_v1_api_proto_goTypes = []any{
-	(*PushRequest)(nil),  // 0: openqueue.v1.PushRequest
-	(*PushResponse)(nil), // 1: openqueue.v1.PushResponse
+	(HTTPMethod)(0),            // 0: api.v1.HTTPMethod
+	(*Task)(nil),               // 1: api.v1.Task
+	(*CreateTaskRequest)(nil),  // 2: api.v1.CreateTaskRequest
+	(*CreateTaskResponse)(nil), // 3: api.v1.CreateTaskResponse
+	nil,                        // 4: api.v1.Task.HeadersEntry
 }
 var file_api_v1_api_proto_depIdxs = []int32{
-	0, // 0: openqueue.v1.Api.Push:input_type -> openqueue.v1.PushRequest
-	1, // 1: openqueue.v1.Api.Push:output_type -> openqueue.v1.PushResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: api.v1.Task.method:type_name -> api.v1.HTTPMethod
+	4, // 1: api.v1.Task.headers:type_name -> api.v1.Task.HeadersEntry
+	1, // 2: api.v1.CreateTaskRequest.task:type_name -> api.v1.Task
+	2, // 3: api.v1.QueueService.CreateTask:input_type -> api.v1.CreateTaskRequest
+	3, // 4: api.v1.QueueService.CreateTask:output_type -> api.v1.CreateTaskResponse
+	4, // [4:5] is the sub-list for method output_type
+	3, // [3:4] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_api_v1_api_proto_init() }
@@ -141,13 +323,14 @@ func file_api_v1_api_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_v1_api_proto_rawDesc), len(file_api_v1_api_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   2,
+			NumEnums:      1,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_api_v1_api_proto_goTypes,
 		DependencyIndexes: file_api_v1_api_proto_depIdxs,
+		EnumInfos:         file_api_v1_api_proto_enumTypes,
 		MessageInfos:      file_api_v1_api_proto_msgTypes,
 	}.Build()
 	File_api_v1_api_proto = out.File

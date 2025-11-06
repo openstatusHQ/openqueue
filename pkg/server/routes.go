@@ -12,9 +12,6 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Get("/health", s.healthHandler)
 
 
-
-
-
 	return r
 }
 

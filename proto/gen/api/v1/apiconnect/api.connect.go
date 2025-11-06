@@ -21,8 +21,8 @@ import (
 const _ = connect.IsAtLeastVersion1_13_0
 
 const (
-	// ApiName is the fully-qualified name of the Api service.
-	ApiName = "openqueue.v1.Api"
+	// QueueServiceName is the fully-qualified name of the QueueService service.
+	QueueServiceName = "api.v1.QueueService"
 )
 
 // These constants are the fully-qualified names of the RPCs defined in this package. They're
@@ -33,76 +33,76 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// ApiPushProcedure is the fully-qualified name of the Api's Push RPC.
-	ApiPushProcedure = "/openqueue.v1.Api/Push"
+	// QueueServiceCreateTaskProcedure is the fully-qualified name of the QueueService's CreateTask RPC.
+	QueueServiceCreateTaskProcedure = "/api.v1.QueueService/CreateTask"
 )
 
-// ApiClient is a client for the openqueue.v1.Api service.
-type ApiClient interface {
-	Push(context.Context, *connect.Request[v1.PushRequest]) (*connect.Response[v1.PushResponse], error)
+// QueueServiceClient is a client for the api.v1.QueueService service.
+type QueueServiceClient interface {
+	CreateTask(context.Context, *connect.Request[v1.CreateTaskRequest]) (*connect.Response[v1.CreateTaskResponse], error)
 }
 
-// NewApiClient constructs a client for the openqueue.v1.Api service. By default, it uses the
-// Connect protocol with the binary Protobuf Codec, asks for gzipped responses, and sends
+// NewQueueServiceClient constructs a client for the api.v1.QueueService service. By default, it
+// uses the Connect protocol with the binary Protobuf Codec, asks for gzipped responses, and sends
 // uncompressed requests. To use the gRPC or gRPC-Web protocols, supply the connect.WithGRPC() or
 // connect.WithGRPCWeb() options.
 //
 // The URL supplied here should be the base URL for the Connect or gRPC server (for example,
 // http://api.acme.com or https://acme.com/grpc).
-func NewApiClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) ApiClient {
+func NewQueueServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) QueueServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
-	apiMethods := v1.File_api_v1_api_proto.Services().ByName("Api").Methods()
-	return &apiClient{
-		push: connect.NewClient[v1.PushRequest, v1.PushResponse](
+	queueServiceMethods := v1.File_api_v1_api_proto.Services().ByName("QueueService").Methods()
+	return &queueServiceClient{
+		createTask: connect.NewClient[v1.CreateTaskRequest, v1.CreateTaskResponse](
 			httpClient,
-			baseURL+ApiPushProcedure,
-			connect.WithSchema(apiMethods.ByName("Push")),
+			baseURL+QueueServiceCreateTaskProcedure,
+			connect.WithSchema(queueServiceMethods.ByName("CreateTask")),
 			connect.WithClientOptions(opts...),
 		),
 	}
 }
 
-// apiClient implements ApiClient.
-type apiClient struct {
-	push *connect.Client[v1.PushRequest, v1.PushResponse]
+// queueServiceClient implements QueueServiceClient.
+type queueServiceClient struct {
+	createTask *connect.Client[v1.CreateTaskRequest, v1.CreateTaskResponse]
 }
 
-// Push calls openqueue.v1.Api.Push.
-func (c *apiClient) Push(ctx context.Context, req *connect.Request[v1.PushRequest]) (*connect.Response[v1.PushResponse], error) {
-	return c.push.CallUnary(ctx, req)
+// CreateTask calls api.v1.QueueService.CreateTask.
+func (c *queueServiceClient) CreateTask(ctx context.Context, req *connect.Request[v1.CreateTaskRequest]) (*connect.Response[v1.CreateTaskResponse], error) {
+	return c.createTask.CallUnary(ctx, req)
 }
 
-// ApiHandler is an implementation of the openqueue.v1.Api service.
-type ApiHandler interface {
-	Push(context.Context, *connect.Request[v1.PushRequest]) (*connect.Response[v1.PushResponse], error)
+// QueueServiceHandler is an implementation of the api.v1.QueueService service.
+type QueueServiceHandler interface {
+	CreateTask(context.Context, *connect.Request[v1.CreateTaskRequest]) (*connect.Response[v1.CreateTaskResponse], error)
 }
 
-// NewApiHandler builds an HTTP handler from the service implementation. It returns the path on
-// which to mount the handler and the handler itself.
+// NewQueueServiceHandler builds an HTTP handler from the service implementation. It returns the
+// path on which to mount the handler and the handler itself.
 //
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
-func NewApiHandler(svc ApiHandler, opts ...connect.HandlerOption) (string, http.Handler) {
-	apiMethods := v1.File_api_v1_api_proto.Services().ByName("Api").Methods()
-	apiPushHandler := connect.NewUnaryHandler(
-		ApiPushProcedure,
-		svc.Push,
-		connect.WithSchema(apiMethods.ByName("Push")),
+func NewQueueServiceHandler(svc QueueServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
+	queueServiceMethods := v1.File_api_v1_api_proto.Services().ByName("QueueService").Methods()
+	queueServiceCreateTaskHandler := connect.NewUnaryHandler(
+		QueueServiceCreateTaskProcedure,
+		svc.CreateTask,
+		connect.WithSchema(queueServiceMethods.ByName("CreateTask")),
 		connect.WithHandlerOptions(opts...),
 	)
-	return "/openqueue.v1.Api/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	return "/api.v1.QueueService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case ApiPushProcedure:
-			apiPushHandler.ServeHTTP(w, r)
+		case QueueServiceCreateTaskProcedure:
+			queueServiceCreateTaskHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
 	})
 }
 
-// UnimplementedApiHandler returns CodeUnimplemented from all methods.
-type UnimplementedApiHandler struct{}
+// UnimplementedQueueServiceHandler returns CodeUnimplemented from all methods.
+type UnimplementedQueueServiceHandler struct{}
 
-func (UnimplementedApiHandler) Push(context.Context, *connect.Request[v1.PushRequest]) (*connect.Response[v1.PushResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("openqueue.v1.Api.Push is not implemented"))
+func (UnimplementedQueueServiceHandler) CreateTask(context.Context, *connect.Request[v1.CreateTaskRequest]) (*connect.Response[v1.CreateTaskResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("api.v1.QueueService.CreateTask is not implemented"))
 }
