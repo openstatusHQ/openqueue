@@ -13,15 +13,13 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-
 type Server struct {
 	port int
 
 	db *sqlx.DB
 }
 
-func  NewServer( port int) error {
-
+func NewServer(port int) error {
 
 	server := newServer(port)
 

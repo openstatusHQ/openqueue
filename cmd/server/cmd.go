@@ -15,6 +15,12 @@ func Command() *cli.Command {
 				Usage:   "Port to listen on",
 				Sources: cli.EnvVars("OPENSTATUS_PORT"),
 			},
+			&cli.StringFlag{
+				Name:        "config",
+				Usage:       "The configuration file",
+				DefaultText: "openqueue.yaml",
+				Value:       "openqueue.yaml",
+			},
 		},
 	}
 	return cmd

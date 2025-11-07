@@ -28,7 +28,6 @@ CREATE TABLE IF NOT EXISTS job_run (
   status text NOT NULL,
   created_at INTEGER NOT NULL,
   updated_at INTEGER NOT NULL,
-
   FOREIGN KEY (job_id) REFERENCES job(id)
 );
 `

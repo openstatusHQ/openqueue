@@ -11,7 +11,6 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r := chi.NewRouter()
 	r.Get("/health", s.healthHandler)
 
-
 	return r
 }
 
