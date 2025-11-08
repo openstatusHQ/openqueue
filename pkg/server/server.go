@@ -10,18 +10,36 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/openstatushq/openqueue/pkg/database"
 	"github.com/rs/zerolog/log"
 )
 
 type Server struct {
 	port int
-
-	db *sqlx.DB
+	dbs map[string]*sqlx.DB
 }
 
-func NewServer(port int) error {
+type Options struct {
+	Port int
+	Queues []struct{
+		Name string
+		DB string
+	}
+}
+func NewServer(opts Options) error {
 
-	server := newServer(port)
+
+	s := new(Server)
+	s.port = opts.Port
+	for _, q := range opts.Queues {
+		db := database.GetDatabase(q.DB)
+		if db == nil {
+			log.Fatal().Msgf("Error setting up database %s", q.DB)
+		}
+		s.dbs[q.Name] = db
+	}
+
+	server := newServer(s)
 
 	// Server run context
 	serverCtx, serverStopCtx := context.WithCancel(context.Background())
@@ -65,17 +83,13 @@ func NewServer(port int) error {
 	return nil
 }
 
-func newServer(port int) *http.Server {
-	NewServer := &Server{
-		port: port,
+func newServer(s *Server) *http.Server {
 
-		db: nil,
-	}
 
 	// Declare Server config
 	server := &http.Server{
-		Addr:         fmt.Sprintf(":%d", NewServer.port),
-		Handler:      NewServer.RegisterRoutes(),
+		Addr:         fmt.Sprintf(":%d", s.port),
+		Handler:      s.RegisterRoutes(),
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,

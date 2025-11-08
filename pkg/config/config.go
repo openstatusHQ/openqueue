@@ -6,6 +6,7 @@ import (
 	"github.com/knadh/koanf/parsers/yaml"
 	"github.com/knadh/koanf/providers/file"
 	"github.com/knadh/koanf/v2"
+	"github.com/rs/zerolog/log"
 )
 
 var (
@@ -29,20 +30,19 @@ func GetConfig() *Config {
 	return loadedConfig
 }
 
-func loadConfigFile(ctx context.Context, path string) error {
+func LoadConfigFile(ctx context.Context, path string) error {
 
+	log.Ctx(ctx).Debug().Msgf("Loading config file: %s", path)
 	file := file.Provider(path)
-
 	err := k.Load(file, yaml.Parser())
 	if err != nil {
 		return err
 	}
 
-	var cfg Config
-	if err := k.Unmarshal("", &cfg); err != nil {
+	loadedConfig = &Config{}
+	if err := k.Unmarshal("", loadedConfig); err != nil {
 		return err
 	}
 
-	loadedConfig = &cfg
 	return nil
 }

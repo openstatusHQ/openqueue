@@ -29,7 +29,7 @@ queues:
 
 	ctx := context.Background()
 
-	err = loadConfigFile(ctx, configFile)
+	err = LoadConfigFile(ctx, configFile)
 	cfg := GetConfig()
 
 	t.Log(cfg)
