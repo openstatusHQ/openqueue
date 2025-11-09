@@ -6,6 +6,7 @@ option go_package = "github.com/openstatushq/openqueue/proto/gen/api/v1;api";
 
 service QueueService {
   rpc CreateTask (CreateTaskRequest) returns (CreateTaskResponse) {}
+  rpc GetTask (GetTaskRequest) returns (GetTaskResponse) {}
 }
 
 enum HTTPMethod {
@@ -20,6 +21,14 @@ enum HTTPMethod {
     HTTP_METHOD_CONNECT = 8;
 }
 
+enum TaskStatus {
+    TASK_STATUS_UNSPECIFIED = 0;
+    TASK_STATUS_PENDING = 1;
+    TASK_STATUS_IN_PROGRESS = 2;
+    TASK_STATUS_COMPLETED = 3;
+    TASK_STATUS_FAILED = 4;
+}
+
 message Task {
     string url = 1;
     HTTPMethod method = 2;
@@ -32,4 +41,14 @@ message CreateTaskRequest {
 }
 message CreateTaskResponse {
     int64 task_id = 1;
+}
+
+message GetTaskRequest {
+    int64 task_id = 1;
+}
+
+message GetTaskResponse {
+    int64 task_id = 1;
+    Task task = 2;
+    TaskStatus status = 3;
 }

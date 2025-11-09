@@ -40,7 +40,6 @@ func action(ctx context.Context, cmd *cli.Command) error {
 		})
 	}
 
-
 	err = server.NewServer(ctx, opts)
 	if err != nil {
 		return err

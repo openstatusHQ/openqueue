@@ -35,7 +35,7 @@ func NewServer(ctx context.Context, opts Options) error {
 	s.port = opts.Port
 	s.dbs = make(map[string]*sqlx.DB)
 	for _, q := range opts.Queues {
-		db := database.GetDatabase(ctx,q.DB)
+		db := database.GetDatabase(ctx, q.DB)
 		if db == nil {
 			log.Fatal().Msgf("Error setting up database %s", q.DB)
 		}

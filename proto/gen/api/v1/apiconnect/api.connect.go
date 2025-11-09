@@ -35,11 +35,14 @@ const (
 const (
 	// QueueServiceCreateTaskProcedure is the fully-qualified name of the QueueService's CreateTask RPC.
 	QueueServiceCreateTaskProcedure = "/api.v1.QueueService/CreateTask"
+	// QueueServiceGetTaskProcedure is the fully-qualified name of the QueueService's GetTask RPC.
+	QueueServiceGetTaskProcedure = "/api.v1.QueueService/GetTask"
 )
 
 // QueueServiceClient is a client for the api.v1.QueueService service.
 type QueueServiceClient interface {
 	CreateTask(context.Context, *connect.Request[v1.CreateTaskRequest]) (*connect.Response[v1.CreateTaskResponse], error)
+	GetTask(context.Context, *connect.Request[v1.GetTaskRequest]) (*connect.Response[v1.GetTaskResponse], error)
 }
 
 // NewQueueServiceClient constructs a client for the api.v1.QueueService service. By default, it
@@ -59,12 +62,19 @@ func NewQueueServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(queueServiceMethods.ByName("CreateTask")),
 			connect.WithClientOptions(opts...),
 		),
+		getTask: connect.NewClient[v1.GetTaskRequest, v1.GetTaskResponse](
+			httpClient,
+			baseURL+QueueServiceGetTaskProcedure,
+			connect.WithSchema(queueServiceMethods.ByName("GetTask")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // queueServiceClient implements QueueServiceClient.
 type queueServiceClient struct {
 	createTask *connect.Client[v1.CreateTaskRequest, v1.CreateTaskResponse]
+	getTask    *connect.Client[v1.GetTaskRequest, v1.GetTaskResponse]
 }
 
 // CreateTask calls api.v1.QueueService.CreateTask.
@@ -72,9 +82,15 @@ func (c *queueServiceClient) CreateTask(ctx context.Context, req *connect.Reques
 	return c.createTask.CallUnary(ctx, req)
 }
 
+// GetTask calls api.v1.QueueService.GetTask.
+func (c *queueServiceClient) GetTask(ctx context.Context, req *connect.Request[v1.GetTaskRequest]) (*connect.Response[v1.GetTaskResponse], error) {
+	return c.getTask.CallUnary(ctx, req)
+}
+
 // QueueServiceHandler is an implementation of the api.v1.QueueService service.
 type QueueServiceHandler interface {
 	CreateTask(context.Context, *connect.Request[v1.CreateTaskRequest]) (*connect.Response[v1.CreateTaskResponse], error)
+	GetTask(context.Context, *connect.Request[v1.GetTaskRequest]) (*connect.Response[v1.GetTaskResponse], error)
 }
 
 // NewQueueServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -90,10 +106,18 @@ func NewQueueServiceHandler(svc QueueServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(queueServiceMethods.ByName("CreateTask")),
 		connect.WithHandlerOptions(opts...),
 	)
+	queueServiceGetTaskHandler := connect.NewUnaryHandler(
+		QueueServiceGetTaskProcedure,
+		svc.GetTask,
+		connect.WithSchema(queueServiceMethods.ByName("GetTask")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/api.v1.QueueService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case QueueServiceCreateTaskProcedure:
 			queueServiceCreateTaskHandler.ServeHTTP(w, r)
+		case QueueServiceGetTaskProcedure:
+			queueServiceGetTaskHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -105,4 +129,8 @@ type UnimplementedQueueServiceHandler struct{}
 
 func (UnimplementedQueueServiceHandler) CreateTask(context.Context, *connect.Request[v1.CreateTaskRequest]) (*connect.Response[v1.CreateTaskResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("api.v1.QueueService.CreateTask is not implemented"))
+}
+
+func (UnimplementedQueueServiceHandler) GetTask(context.Context, *connect.Request[v1.GetTaskRequest]) (*connect.Response[v1.GetTaskResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("api.v1.QueueService.GetTask is not implemented"))
 }
