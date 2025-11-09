@@ -16,23 +16,26 @@ import (
 
 type Server struct {
 	port int
-	dbs map[string]*sqlx.DB
+	dbs  map[string]*sqlx.DB
 }
 
 type Options struct {
-	Port int
-	Queues []struct{
+	Port   int
+	Queues []struct {
 		Name string
-		DB string
+		DB   string
 	}
 }
-func NewServer(opts Options) error {
 
+func NewServer(ctx context.Context, opts Options) error {
+
+	log.Ctx(ctx).Debug().Msgf("creating server with options %v", opts)
 
 	s := new(Server)
 	s.port = opts.Port
+	s.dbs = make(map[string]*sqlx.DB)
 	for _, q := range opts.Queues {
-		db := database.GetDatabase(q.DB)
+		db := database.GetDatabase(ctx,q.DB)
 		if db == nil {
 			log.Fatal().Msgf("Error setting up database %s", q.DB)
 		}
@@ -67,9 +70,11 @@ func NewServer(opts Options) error {
 		if err != nil {
 			log.Fatal().Err(err).Msg("server shutdown failed")
 		}
+		log.Info().Msg("Stopping server")
 		serverStopCtx()
 	}()
 
+	log.Ctx(ctx).Debug().Msg("server started")
 	// Run the server
 	err := server.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
@@ -84,7 +89,6 @@ func NewServer(opts Options) error {
 }
 
 func newServer(s *Server) *http.Server {
-
 
 	// Declare Server config
 	server := &http.Server{

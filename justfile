@@ -5,7 +5,7 @@ init:
     go install connectrpc.com/connect/cmd/protoc-gen-connect-go@latest
 
 build:
-    go build -o ./tmp/main ./cmd/goat/main.go
+    go build -o ./tmp/main ./cmd/root.go
 
 update:
     go mod tidy

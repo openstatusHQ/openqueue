@@ -14,15 +14,15 @@ func main() {
 	if err := os.Setenv("TZ", "UTC"); err != nil {
 		panic(err)
 	}
-    zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
-    log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stdout})
-   	zerolog.SetGlobalLevel(zerolog.TraceLevel)
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stdout})
+	zerolog.SetGlobalLevel(zerolog.TraceLevel)
 	zerolog.DefaultContextLogger = func() *zerolog.Logger {
 		logger := log.With().Caller().Logger()
 		return &logger
 	}()
 	app := &cli.Command{
-		Name:     "openqueue",
+		Name: "openqueue",
 		Commands: []*cli.Command{
 			server.Command(),
 		},

@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
@@ -18,8 +19,7 @@ CREATE TABLE IF NOT EXISTS job (
   query TEXT,
   created_at INTEGER NOT NULL,
   scheduled_at INTEGER NOT NULL,
-  updated_at INTEGER NOT NULL,
-  FOREIGN KEY (job_id) REFERENCES job(id)
+  updated_at INTEGER NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS job_run (
@@ -32,8 +32,9 @@ CREATE TABLE IF NOT EXISTS job_run (
 );
 `
 
-func GetDatabase(name string) *sqlx.DB {
+func GetDatabase(ctx context.Context, name string) *sqlx.DB {
 
+	log.Ctx(ctx).Debug().Msgf("Creating database %s", name)
 	dbName := fmt.Sprintf("file:./data/%s.db", name)
 	db, err := sqlx.Open("sqlite", dbName)
 
@@ -43,6 +44,8 @@ func GetDatabase(name string) *sqlx.DB {
 	}
 
 	if _, err = db.Exec(schema); err != nil {
+		log.Fatal().Err(err).Msg("failed to execute schema")
+
 		return nil
 	}
 	return db

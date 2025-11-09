@@ -18,10 +18,12 @@ func action(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
-	cfg := config.GetConfig()
 
 	configPath := cmd.String("config")
 	err = config.LoadConfigFile(ctx, configPath)
+
+	cfg := config.GetConfig()
+
 	if err != nil {
 		return err
 	}
@@ -31,14 +33,15 @@ func action(ctx context.Context, cmd *cli.Command) error {
 	for _, q := range cfg.Queues {
 		opts.Queues = append(opts.Queues, struct {
 			Name string
-			DB string
+			DB   string
 		}{
 			Name: q.Name,
 			DB:   q.DB,
 		})
 	}
 
-	err = server.NewServer(opts)
+
+	err = server.NewServer(ctx, opts)
 	if err != nil {
 		return err
 	}
