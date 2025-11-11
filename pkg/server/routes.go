@@ -5,18 +5,13 @@ import (
 	"runtime/debug"
 	"time"
 
-	apiconnect "github.com/openstatushq/openqueue/proto/gen/api/v1/apiconnect"
-
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
+	"github.com/openstatushq/openqueue/pkg/api/apiv1"
 	"github.com/rs/zerolog/log"
 )
 
-type TaskServer struct {
-	// CreateTask(context.Context, *connect.Request[v1.CreateTaskRequest]) (*connect.Response[v1.CreateTaskResponse], error)
-	// GetTask(context.Context, *connect.Request[v1.GetTaskRequest]) (*connect.Response[v1.GetTaskResponse], error)
-}
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := chi.NewRouter()
@@ -25,12 +20,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Use(middleware.Recoverer)
 	r.Get("/health", s.healthHandler)
 
-	taskServer := &TaskServer{}
-	path, handler := apiconnect.NewQueueServiceHandler(taskServer)
+	a:= apiv1.NewAPIv1(s.dbs)
+	apiv1.RegisterAPIv1(r, a)
 
-	r.Group(func(r chi.Router) {
-		r.Mount(path, handler)
-	})
 	return r
 }
 

@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS job (
   method TEXT NOT NULL,
   headers TEXT NOT NULL,
   body TEXT,
-  query TEXT,
+  url TEXT,
   created_at INTEGER NOT NULL,
   scheduled_at INTEGER NOT NULL,
   updated_at INTEGER NOT NULL
@@ -50,4 +50,28 @@ func GetDatabase(ctx context.Context, name string) *sqlx.DB {
 	}
 	return db
 
+}
+
+func CreateTask(ctx context.Context, db *sqlx.DB, job *Job) (int64, error) {
+	if db == nil {
+		return 0, fmt.Errorf("failed to get database")
+	}
+    tx := db.MustBegin()
+
+    r, err := tx.NamedExec("INSERT INTO job (method, headers, body, url, created_at, scheduled_at, updated_at) VALUES (:method, :headers, :body, :url, :created_at, :scheduled_at, :updated_at)", job)
+    if err != nil {
+        tx.Rollback()
+        return 0, fmt.Errorf("failed to create task: %w", err)
+    }
+    id, err := r.LastInsertId()
+    if err != nil {
+        tx.Rollback()
+        return 0, fmt.Errorf("failed to get last insert id: %w", err)
+    }
+    tx.Commit()
+
+    log.Ctx(ctx).Info().Msgf("Created task with id %d", id)
+
+
+	return id, nil
 }
