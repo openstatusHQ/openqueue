@@ -9,22 +9,21 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/openstatushq/openqueue/pkg/api/apiv1"
 	"github.com/openstatushq/openqueue/pkg/database"
+	"github.com/openstatushq/openqueue/pkg/task_runner"
 	"github.com/rs/zerolog/log"
 )
 
 type Server struct {
-	port int
-	queues  map[string]apiv1.QueueOpts
-
+	port   int
+	queues map[string]task_runner.QueueOpts
 }
 
 type Options struct {
 	Port   int
 	Queues []struct {
-		Name string
-		DB   string
+		Name  string
+		DB    string
 		Retry int
 	}
 }
@@ -35,15 +34,15 @@ func NewServer(ctx context.Context, opts Options) error {
 
 	s := new(Server)
 	s.port = opts.Port
-	s.queues = make(map[string]apiv1.QueueOpts)
+	s.queues = make(map[string]task_runner.QueueOpts)
 	for _, q := range opts.Queues {
 		db := database.GetDatabase(ctx, q.DB)
 		if db == nil {
 			log.Fatal().Msgf("Error setting up database %s", q.DB)
 		}
-		s.queues[q.Name] = apiv1.QueueOpts{
+		s.queues[q.Name] = task_runner.QueueOpts{
 			Retry: q.Retry,
-			Db:  db,
+			Db:    db,
 		}
 		log.Ctx(ctx).Debug().Msgf("Added queue %s with DB %s", q.Name, q.DB)
 	}

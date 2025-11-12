@@ -12,7 +12,6 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-
 func (s *Server) RegisterRoutes() http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
@@ -20,7 +19,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Use(middleware.Recoverer)
 	r.Get("/health", s.healthHandler)
 
-	a:= apiv1.NewAPIv1(s.queues)
+	a := apiv1.NewAPIv1(s.queues)
 	apiv1.RegisterAPIv1(r, a)
 
 	return r

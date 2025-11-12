@@ -32,12 +32,12 @@ func action(ctx context.Context, cmd *cli.Command) error {
 
 	for _, q := range cfg.Queues {
 		opts.Queues = append(opts.Queues, struct {
-			Name string
-			DB   string
+			Name  string
+			DB    string
 			Retry int
 		}{
-			Name: q.Name,
-			DB:   q.DB,
+			Name:  q.Name,
+			DB:    q.DB,
 			Retry: q.Retry,
 		})
 	}

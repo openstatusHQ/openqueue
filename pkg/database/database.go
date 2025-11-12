@@ -56,34 +56,33 @@ func CreateTask(ctx context.Context, db *sqlx.DB, task *Task) (int64, error) {
 	if db == nil {
 		return 0, fmt.Errorf("failed to get database")
 	}
-    tx := db.MustBegin()
+	tx := db.MustBegin()
 
-    r, err := tx.NamedExec("INSERT INTO task (method, headers, body, url, created_at, scheduled_at, updated_at) VALUES (:method, :headers, :body, :url, :created_at, :scheduled_at, :updated_at)", task)
-    if err != nil {
-        tx.Rollback()
-        return 0, fmt.Errorf("failed to create task: %w", err)
-    }
-    id, err := r.LastInsertId()
-    if err != nil {
-        tx.Rollback()
-        return 0, fmt.Errorf("failed to get last insert id: %w", err)
-    }
-
-    jr := &TaskExecution{
-		TaskId:     id,
-		Status:    StatusPending,
-
+	r, err := tx.NamedExec("INSERT INTO task (method, headers, body, url, created_at, scheduled_at, updated_at) VALUES (:method, :headers, :body, :url, :created_at, :scheduled_at, :updated_at)", task)
+	if err != nil {
+		tx.Rollback()
+		return 0, fmt.Errorf("failed to create task: %w", err)
+	}
+	id, err := r.LastInsertId()
+	if err != nil {
+		tx.Rollback()
+		return 0, fmt.Errorf("failed to get last insert id: %w", err)
 	}
 
-	r,err = tx.NamedExec("INSERT INTO task_execution (task_id, status) VALUES (:task_id, :status)", jr)
- 	if err != nil {
-        tx.Rollback()
-        return 0, fmt.Errorf("failed to insert task_execution %w", err)
-    }
+	jr := &TaskExecution{
+		TaskId: id,
+		Status: StatusPending,
+	}
 
-    tx.Commit()
+	r, err = tx.NamedExec("INSERT INTO task_execution (task_id, status) VALUES (:task_id, :status)", jr)
+	if err != nil {
+		tx.Rollback()
+		return 0, fmt.Errorf("failed to insert task_execution %w", err)
+	}
 
-    log.Ctx(ctx).Info().Msgf("Created task with id %d", id)
+	tx.Commit()
+
+	log.Ctx(ctx).Info().Msgf("Created task with id %d", id)
 
 	return id, nil
 }
@@ -97,5 +96,5 @@ func GetTask(ctx context.Context, db *sqlx.DB, id int64) (*Task, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to get task: %w", err)
 	}
-	return  job, nil
+	return job, nil
 }
