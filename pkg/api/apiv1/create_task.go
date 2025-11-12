@@ -3,6 +3,7 @@ package apiv1
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/openstatushq/openqueue/pkg/database"
 	v1 "github.com/openstatushq/openqueue/proto/gen/api/v1"
@@ -21,17 +22,22 @@ func (api *APIv1)  CreateTask(ctx context.Context, req *connect.Request[v1.Creat
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("queue name is required"))
 	}
 
-	i, ok := api.dbs[req.Msg.QueueName]
+	i, ok := api.queues[req.Msg.QueueName]
 	if !ok {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("queue not found"))
 	}
 
-	id, err := database.CreateTask(ctx, i, &database.Job{
 
+	id, err := database.CreateTask(ctx, i.Db, &database.Task{
+		Method:      req.Msg.GetTask().Method.String(),
+		Headers:     fmt.Sprintf("%v",req.Msg.GetTask().Headers),
+		Body:        req.Msg.GetTask().Body,
+		URL:         req.Msg.GetTask().Url,
 	})
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
+
 
 	return &connect.Response[v1.CreateTaskResponse]{
 		Msg: &v1.CreateTaskResponse{

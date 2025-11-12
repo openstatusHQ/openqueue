@@ -148,6 +148,7 @@ type Task struct {
 	Url           string                 `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
 	Method        HTTPMethod             `protobuf:"varint,2,opt,name=method,proto3,enum=api.v1.HTTPMethod" json:"method,omitempty"`
 	Headers       map[string]string      `protobuf:"bytes,3,rep,name=headers,proto3" json:"headers,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Body          string                 `protobuf:"bytes,4,opt,name=body,proto3" json:"body,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -201,6 +202,13 @@ func (x *Task) GetHeaders() map[string]string {
 		return x.Headers
 	}
 	return nil
+}
+
+func (x *Task) GetBody() string {
+	if x != nil {
+		return x.Body
+	}
+	return ""
 }
 
 type CreateTaskRequest struct {
@@ -407,11 +415,12 @@ var File_api_v1_api_proto protoreflect.FileDescriptor
 
 const file_api_v1_api_proto_rawDesc = "" +
 	"\n" +
-	"\x10api/v1/api.proto\x12\x06api.v1\"\xb5\x01\n" +
+	"\x10api/v1/api.proto\x12\x06api.v1\"\xc9\x01\n" +
 	"\x04Task\x12\x10\n" +
 	"\x03url\x18\x01 \x01(\tR\x03url\x12*\n" +
 	"\x06method\x18\x02 \x01(\x0e2\x12.api.v1.HTTPMethodR\x06method\x123\n" +
-	"\aheaders\x18\x03 \x03(\v2\x19.api.v1.Task.HeadersEntryR\aheaders\x1a:\n" +
+	"\aheaders\x18\x03 \x03(\v2\x19.api.v1.Task.HeadersEntryR\aheaders\x12\x12\n" +
+	"\x04body\x18\x04 \x01(\tR\x04body\x1a:\n" +
 	"\fHeadersEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"T\n" +

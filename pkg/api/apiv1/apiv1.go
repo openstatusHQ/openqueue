@@ -6,13 +6,19 @@ import (
 	"github.com/openstatushq/openqueue/proto/gen/api/v1/apiconnect"
 )
 
-type APIv1 struct {
-	dbs  map[string]*sqlx.DB
+type QueueOpts struct {
+	Retry int
+	Db  *sqlx.DB
 }
 
-func NewAPIv1(dbs map[string]*sqlx.DB) *APIv1 {
+
+type APIv1 struct {
+	queues  map[string]QueueOpts
+}
+
+func NewAPIv1(queues map[string]QueueOpts) *APIv1 {
 	return &APIv1{
-		dbs: dbs,
+		queues: queues,
 	}
 }
 

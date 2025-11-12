@@ -34,9 +34,11 @@ func action(ctx context.Context, cmd *cli.Command) error {
 		opts.Queues = append(opts.Queues, struct {
 			Name string
 			DB   string
+			Retry int
 		}{
 			Name: q.Name,
 			DB:   q.DB,
+			Retry: q.Retry,
 		})
 	}
 

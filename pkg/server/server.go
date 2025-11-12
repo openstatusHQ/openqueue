@@ -9,14 +9,15 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/jmoiron/sqlx"
+	"github.com/openstatushq/openqueue/pkg/api/apiv1"
 	"github.com/openstatushq/openqueue/pkg/database"
 	"github.com/rs/zerolog/log"
 )
 
 type Server struct {
 	port int
-	dbs  map[string]*sqlx.DB
+	queues  map[string]apiv1.QueueOpts
+
 }
 
 type Options struct {
@@ -24,6 +25,7 @@ type Options struct {
 	Queues []struct {
 		Name string
 		DB   string
+		Retry int
 	}
 }
 
@@ -33,13 +35,17 @@ func NewServer(ctx context.Context, opts Options) error {
 
 	s := new(Server)
 	s.port = opts.Port
-	s.dbs = make(map[string]*sqlx.DB)
+	s.queues = make(map[string]apiv1.QueueOpts)
 	for _, q := range opts.Queues {
 		db := database.GetDatabase(ctx, q.DB)
 		if db == nil {
 			log.Fatal().Msgf("Error setting up database %s", q.DB)
 		}
-		s.dbs[q.Name] = db
+		s.queues[q.Name] = apiv1.QueueOpts{
+			Retry: q.Retry,
+			Db:  db,
+		}
+		log.Ctx(ctx).Debug().Msgf("Added queue %s with DB %s", q.Name, q.DB)
 	}
 
 	server := newServer(s)

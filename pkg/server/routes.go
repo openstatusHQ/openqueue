@@ -20,7 +20,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Use(middleware.Recoverer)
 	r.Get("/health", s.healthHandler)
 
-	a:= apiv1.NewAPIv1(s.dbs)
+	a:= apiv1.NewAPIv1(s.queues)
 	apiv1.RegisterAPIv1(r, a)
 
 	return r

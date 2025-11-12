@@ -15,8 +15,9 @@ var (
 )
 
 type QueueConfig struct {
-	Name string `koanf:"name"`
-	DB   string `koanf:"db"`
+	Name  string `koanf:"name"`
+	DB    string `koanf:"db"`
+	Retry int    `koanf:"retry"`
 }
 
 type Config struct {

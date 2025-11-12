@@ -20,6 +20,7 @@ func TestGetConfig(t *testing.T) {
 queues:
   - name: queue1
     db: test1
+    retry: 5
   - name: queue2
     db: test2
 `
