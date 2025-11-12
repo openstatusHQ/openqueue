@@ -15,7 +15,7 @@ func TestCreateTask(t *testing.T) {
 	}
 	defer db.Close()
 
-	if _, err = db.Exec(schema); err != nil {
+	if _, err = db.Exec(Schema); err != nil {
 		t.Fatal("cannot create table")
 	}
 
@@ -43,7 +43,7 @@ func TestCreateAndGetTask(t *testing.T) {
 	}
 	defer db.Close()
 
-	if _, err = db.Exec(schema); err != nil {
+	if _, err = db.Exec(Schema); err != nil {
 		t.Fatal("cannot create table")
 	}
 

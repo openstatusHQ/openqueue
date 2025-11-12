@@ -10,7 +10,7 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-var schema = `
+var Schema = `
 CREATE TABLE IF NOT EXISTS task (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   method TEXT NOT NULL,
@@ -43,7 +43,7 @@ func GetDatabase(ctx context.Context, name string) *sqlx.DB {
 		return nil
 	}
 
-	if _, err = db.Exec(schema); err != nil {
+	if _, err = db.Exec(Schema); err != nil {
 		log.Fatal().Err(err).Msg("failed to execute schema")
 
 		return nil
@@ -97,4 +97,26 @@ func GetTask(ctx context.Context, db *sqlx.DB, id int64) (*Task, error) {
 		return nil, fmt.Errorf("failed to get task: %w", err)
 	}
 	return job, nil
+}
+
+func AddTaskExecution(ctx context.Context, db *sqlx.DB, execution *TaskExecution) (int64, error) {
+	if db == nil {
+		return 0, fmt.Errorf("failed to get database")
+	}
+	tx := db.MustBegin()
+	r, err := tx.NamedExec("INSERT INTO task_execution (task_id, status) VALUES (:task_id, :status )", execution)
+
+	if err != nil {
+		tx.Rollback()
+		return 0, fmt.Errorf("failed to insert task_execution %w", err)
+	}
+
+	id, err := r.LastInsertId()
+	if err != nil {
+		tx.Rollback()
+		return 0, fmt.Errorf("failed to get last insert id: %w", err)
+	}
+
+	tx.Commit()
+	return id, nil
 }

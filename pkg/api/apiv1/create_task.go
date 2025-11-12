@@ -39,7 +39,7 @@ func (api *APIv1) CreateTask(ctx context.Context, req *connect.Request[v1.Create
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
-	go task_runner.Task(ctx, i)
+	go task_runner.Task(ctx, i, req.Msg.Task, id)
 
 	return &connect.Response[v1.CreateTaskResponse]{
 		Msg: &v1.CreateTaskResponse{
