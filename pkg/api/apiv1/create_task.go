@@ -27,8 +27,9 @@ func (api *APIv1) CreateTask(ctx context.Context, req *connect.Request[v1.Create
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("queue not found"))
 	}
 
+
 	task := &database.Task{
-		Method:  req.Msg.GetTask().Method.String(),
+		Method:  req.Msg.GetTask().Method,
 		Headers: fmt.Sprintf("%v", req.Msg.GetTask().Headers),
 		Body:    req.Msg.GetTask().Body,
 		URL:     req.Msg.GetTask().Url,
@@ -39,7 +40,8 @@ func (api *APIv1) CreateTask(ctx context.Context, req *connect.Request[v1.Create
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
-	go task_runner.Task(ctx, i, req.Msg.Task, id)
+	bgCtx := context.Background()
+	go task_runner.Task(bgCtx, i, req.Msg.Task, id)
 
 	return &connect.Response[v1.CreateTaskResponse]{
 		Msg: &v1.CreateTaskResponse{

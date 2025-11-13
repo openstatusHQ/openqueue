@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog/log"
 
@@ -12,23 +13,23 @@ import (
 
 var Schema = `
 CREATE TABLE IF NOT EXISTS task (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  method TEXT NOT NULL,
-  headers TEXT NOT NULL,
-  body TEXT,
-  url TEXT,
-  created_at INTEGER NOT NULL DEFAULT (unixepoch()),
-  scheduled_at INTEGER NOT NULL DEFAULT (unixepoch()),
-  updated_at INTEGER NOT NULL DEFAULT (unixepoch())
+	id TEXT NOT NULL,
+	method TEXT NOT NULL,
+	headers TEXT NOT NULL,
+	body TEXT,
+	url TEXT,
+	created_at INTEGER NOT NULL DEFAULT (unixepoch()),
+	scheduled_at INTEGER NOT NULL DEFAULT (unixepoch()),
+	updated_at INTEGER NOT NULL DEFAULT (unixepoch())
 );
 
 CREATE TABLE IF NOT EXISTS task_execution (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  task_id INTEGER NOT NULL,
-  status text NOT NULL,
-  created_at INTEGER NOT NULL DEFAULT (unixepoch()),
-  updated_at INTEGER NOT NULL DEFAULT (unixepoch()),
-  FOREIGN KEY (task_id) REFERENCES task(id)
+	id TEXT NOT NULL,
+	task_id TEXT NOT NULL,
+	status text NOT NULL,
+	created_at INTEGER NOT NULL DEFAULT (unixepoch()),
+	updated_at INTEGER NOT NULL DEFAULT (unixepoch()),
+  	FOREIGN KEY (task_id) REFERENCES task(id)
 );
 `
 
@@ -52,42 +53,50 @@ func GetDatabase(ctx context.Context, name string) *sqlx.DB {
 
 }
 
-func CreateTask(ctx context.Context, db *sqlx.DB, task *Task) (int64, error) {
+func CreateTask(ctx context.Context, db *sqlx.DB, task *Task) (string, error) {
 	if db == nil {
-		return 0, fmt.Errorf("failed to get database")
+		return "", fmt.Errorf("failed to get database")
 	}
 	tx := db.MustBegin()
 
-	r, err := tx.NamedExec("INSERT INTO task (method, headers, body, url, created_at, scheduled_at, updated_at) VALUES (:method, :headers, :body, :url, :created_at, :scheduled_at, :updated_at)", task)
+	id, err := uuid.NewV7()
 	if err != nil {
 		tx.Rollback()
-		return 0, fmt.Errorf("failed to create task: %w", err)
+		return "", fmt.Errorf("failed to generate uuid: %w", err)
 	}
-	id, err := r.LastInsertId()
+	//  Let's update task ID
+	task.ID = id.String()
+
+	_, err = tx.NamedExec("INSERT INTO task (id, method, headers, body, url) VALUES (:id, :method, :headers, :body, :url)", task)
 	if err != nil {
 		tx.Rollback()
-		return 0, fmt.Errorf("failed to get last insert id: %w", err)
+		return "", fmt.Errorf("failed to create task: %w", err)
 	}
 
+	newId, err := uuid.NewV7()
+	if err != nil {
+		tx.Rollback()
+		return "", fmt.Errorf("failed to generate uuid: %w", err)
+	}
 	jr := &TaskExecution{
-		TaskId: id,
+		TaskId: newId.String(),
 		Status: StatusPending,
 	}
 
-	r, err = tx.NamedExec("INSERT INTO task_execution (task_id, status) VALUES (:task_id, :status)", jr)
+	_, err = tx.NamedExec("INSERT INTO task_execution (id, task_id, status) VALUES (:id, :task_id, :status)", jr)
 	if err != nil {
 		tx.Rollback()
-		return 0, fmt.Errorf("failed to insert task_execution %w", err)
+		return "", fmt.Errorf("failed to insert task_execution %w", err)
 	}
 
 	tx.Commit()
 
-	log.Ctx(ctx).Info().Msgf("Created task with id %d", id)
+	log.Ctx(ctx).Info().Msgf("Created task with id %s", id)
 
-	return id, nil
+	return id.String(), nil
 }
 
-func GetTask(ctx context.Context, db *sqlx.DB, id int64) (*Task, error) {
+func GetTask(ctx context.Context, db *sqlx.DB, id string) (*Task, error) {
 	if db == nil {
 		return nil, fmt.Errorf("failed to get database")
 	}
@@ -99,24 +108,30 @@ func GetTask(ctx context.Context, db *sqlx.DB, id int64) (*Task, error) {
 	return job, nil
 }
 
-func AddTaskExecution(ctx context.Context, db *sqlx.DB, execution *TaskExecution) (int64, error) {
+func AddTaskExecution(ctx context.Context, db *sqlx.DB, execution *TaskExecution) (string, error) {
 	if db == nil {
-		return 0, fmt.Errorf("failed to get database")
+		return "", fmt.Errorf("failed to get database")
 	}
+
+	id, err := uuid.NewV7()
+	if err != nil {
+		return "", fmt.Errorf("failed to generate uuid: %w", err)
+	}
+	execution.ID = id.String()
+
 	tx := db.MustBegin()
-	r, err := tx.NamedExec("INSERT INTO task_execution (task_id, status) VALUES (:task_id, :status )", execution)
+	_, err = tx.NamedExec("INSERT INTO task_execution (id, task_id, status) VALUES (:id, :task_id, :status)", execution)
 
 	if err != nil {
 		tx.Rollback()
-		return 0, fmt.Errorf("failed to insert task_execution %w", err)
+		return "", fmt.Errorf("failed to insert task_execution %w", err)
 	}
 
-	id, err := r.LastInsertId()
 	if err != nil {
 		tx.Rollback()
-		return 0, fmt.Errorf("failed to get last insert id: %w", err)
+		return "", fmt.Errorf("failed to get last insert id: %w", err)
 	}
 
 	tx.Commit()
-	return id, nil
+	return id.String(), nil
 }

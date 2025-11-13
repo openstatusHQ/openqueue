@@ -1,7 +1,7 @@
 package database
 
 type Task struct {
-	ID          int64  `json:"id" db:"id"`
+	ID          string `json:"id" db:"id"`
 	Method      string `json:"method" db:"method"`
 	Headers     string `json:"headers" db:"headers"`
 	Body        string `json:"body,omitempty" db:"body"`
@@ -22,8 +22,8 @@ const (
 
 type TaskExecution struct {
 	Status    TaskStatus `json:"status" db:"status"`
-	ID        int64      `json:"id" db:"id"`
-	TaskId    int64      `json:"task_id" db:"task_id"`
+	ID        string     `json:"id" db:"id"`
+	TaskId    string     `json:"task_id" db:"task_id"`
 	CreatedAt int64      `json:"created_at" db:"created_at"`
 	UpdatedAt int64      `json:"updated_at" db:"updated_at"`
 }

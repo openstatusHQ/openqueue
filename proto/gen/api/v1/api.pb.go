@@ -146,7 +146,7 @@ func (TaskStatus) EnumDescriptor() ([]byte, []int) {
 type Task struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Url           string                 `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
-	Method        HTTPMethod             `protobuf:"varint,2,opt,name=method,proto3,enum=api.v1.HTTPMethod" json:"method,omitempty"`
+	Method        string                 `protobuf:"bytes,2,opt,name=method,proto3" json:"method,omitempty"`
 	Headers       map[string]string      `protobuf:"bytes,3,rep,name=headers,proto3" json:"headers,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	Body          string                 `protobuf:"bytes,4,opt,name=body,proto3" json:"body,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -190,11 +190,11 @@ func (x *Task) GetUrl() string {
 	return ""
 }
 
-func (x *Task) GetMethod() HTTPMethod {
+func (x *Task) GetMethod() string {
 	if x != nil {
 		return x.Method
 	}
-	return HTTPMethod_HTTP_METHOD_UNSPECIFIED
+	return ""
 }
 
 func (x *Task) GetHeaders() map[string]string {
@@ -265,7 +265,7 @@ func (x *CreateTaskRequest) GetTask() *Task {
 
 type CreateTaskResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TaskId        int64                  `protobuf:"varint,1,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
+	TaskId        string                 `protobuf:"bytes,1,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -300,16 +300,17 @@ func (*CreateTaskResponse) Descriptor() ([]byte, []int) {
 	return file_api_v1_api_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *CreateTaskResponse) GetTaskId() int64 {
+func (x *CreateTaskResponse) GetTaskId() string {
 	if x != nil {
 		return x.TaskId
 	}
-	return 0
+	return ""
 }
 
 type GetTaskRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TaskId        int64                  `protobuf:"varint,1,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
+	TaskId        string                 `protobuf:"bytes,1,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
+	QueueName     string                 `protobuf:"bytes,2,opt,name=queue_name,json=queueName,proto3" json:"queue_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -344,16 +345,23 @@ func (*GetTaskRequest) Descriptor() ([]byte, []int) {
 	return file_api_v1_api_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *GetTaskRequest) GetTaskId() int64 {
+func (x *GetTaskRequest) GetTaskId() string {
 	if x != nil {
 		return x.TaskId
 	}
-	return 0
+	return ""
+}
+
+func (x *GetTaskRequest) GetQueueName() string {
+	if x != nil {
+		return x.QueueName
+	}
+	return ""
 }
 
 type GetTaskResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TaskId        int64                  `protobuf:"varint,1,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
+	TaskId        string                 `protobuf:"bytes,1,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
 	Task          *Task                  `protobuf:"bytes,2,opt,name=task,proto3" json:"task,omitempty"`
 	Status        TaskStatus             `protobuf:"varint,3,opt,name=status,proto3,enum=api.v1.TaskStatus" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -390,11 +398,11 @@ func (*GetTaskResponse) Descriptor() ([]byte, []int) {
 	return file_api_v1_api_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *GetTaskResponse) GetTaskId() int64 {
+func (x *GetTaskResponse) GetTaskId() string {
 	if x != nil {
 		return x.TaskId
 	}
-	return 0
+	return ""
 }
 
 func (x *GetTaskResponse) GetTask() *Task {
@@ -415,10 +423,10 @@ var File_api_v1_api_proto protoreflect.FileDescriptor
 
 const file_api_v1_api_proto_rawDesc = "" +
 	"\n" +
-	"\x10api/v1/api.proto\x12\x06api.v1\"\xc9\x01\n" +
+	"\x10api/v1/api.proto\x12\x06api.v1\"\xb5\x01\n" +
 	"\x04Task\x12\x10\n" +
-	"\x03url\x18\x01 \x01(\tR\x03url\x12*\n" +
-	"\x06method\x18\x02 \x01(\x0e2\x12.api.v1.HTTPMethodR\x06method\x123\n" +
+	"\x03url\x18\x01 \x01(\tR\x03url\x12\x16\n" +
+	"\x06method\x18\x02 \x01(\tR\x06method\x123\n" +
 	"\aheaders\x18\x03 \x03(\v2\x19.api.v1.Task.HeadersEntryR\aheaders\x12\x12\n" +
 	"\x04body\x18\x04 \x01(\tR\x04body\x1a:\n" +
 	"\fHeadersEntry\x12\x10\n" +
@@ -429,11 +437,13 @@ const file_api_v1_api_proto_rawDesc = "" +
 	"queue_name\x18\x01 \x01(\tR\tqueueName\x12 \n" +
 	"\x04task\x18\x02 \x01(\v2\f.api.v1.TaskR\x04task\"-\n" +
 	"\x12CreateTaskResponse\x12\x17\n" +
-	"\atask_id\x18\x01 \x01(\x03R\x06taskId\")\n" +
+	"\atask_id\x18\x01 \x01(\tR\x06taskId\"H\n" +
 	"\x0eGetTaskRequest\x12\x17\n" +
-	"\atask_id\x18\x01 \x01(\x03R\x06taskId\"x\n" +
+	"\atask_id\x18\x01 \x01(\tR\x06taskId\x12\x1d\n" +
+	"\n" +
+	"queue_name\x18\x02 \x01(\tR\tqueueName\"x\n" +
 	"\x0fGetTaskResponse\x12\x17\n" +
-	"\atask_id\x18\x01 \x01(\x03R\x06taskId\x12 \n" +
+	"\atask_id\x18\x01 \x01(\tR\x06taskId\x12 \n" +
 	"\x04task\x18\x02 \x01(\v2\f.api.v1.TaskR\x04task\x12*\n" +
 	"\x06status\x18\x03 \x01(\x0e2\x12.api.v1.TaskStatusR\x06status*\xe0\x01\n" +
 	"\n" +
@@ -486,20 +496,19 @@ var file_api_v1_api_proto_goTypes = []any{
 	nil,                        // 7: api.v1.Task.HeadersEntry
 }
 var file_api_v1_api_proto_depIdxs = []int32{
-	0, // 0: api.v1.Task.method:type_name -> api.v1.HTTPMethod
-	7, // 1: api.v1.Task.headers:type_name -> api.v1.Task.HeadersEntry
-	2, // 2: api.v1.CreateTaskRequest.task:type_name -> api.v1.Task
-	2, // 3: api.v1.GetTaskResponse.task:type_name -> api.v1.Task
-	1, // 4: api.v1.GetTaskResponse.status:type_name -> api.v1.TaskStatus
-	3, // 5: api.v1.QueueService.CreateTask:input_type -> api.v1.CreateTaskRequest
-	5, // 6: api.v1.QueueService.GetTask:input_type -> api.v1.GetTaskRequest
-	4, // 7: api.v1.QueueService.CreateTask:output_type -> api.v1.CreateTaskResponse
-	6, // 8: api.v1.QueueService.GetTask:output_type -> api.v1.GetTaskResponse
-	7, // [7:9] is the sub-list for method output_type
-	5, // [5:7] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	7, // 0: api.v1.Task.headers:type_name -> api.v1.Task.HeadersEntry
+	2, // 1: api.v1.CreateTaskRequest.task:type_name -> api.v1.Task
+	2, // 2: api.v1.GetTaskResponse.task:type_name -> api.v1.Task
+	1, // 3: api.v1.GetTaskResponse.status:type_name -> api.v1.TaskStatus
+	3, // 4: api.v1.QueueService.CreateTask:input_type -> api.v1.CreateTaskRequest
+	5, // 5: api.v1.QueueService.GetTask:input_type -> api.v1.GetTaskRequest
+	4, // 6: api.v1.QueueService.CreateTask:output_type -> api.v1.CreateTaskResponse
+	6, // 7: api.v1.QueueService.GetTask:output_type -> api.v1.GetTaskResponse
+	6, // [6:8] is the sub-list for method output_type
+	4, // [4:6] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_api_v1_api_proto_init() }

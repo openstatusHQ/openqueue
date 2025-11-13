@@ -10,7 +10,6 @@ import (
 	"github.com/openstatushq/openqueue/pkg/database"
 	v1 "github.com/openstatushq/openqueue/proto/gen/api/v1"
 	_ "modernc.org/sqlite"
-
 )
 
 func TestTask_Success(t *testing.T) {
@@ -32,7 +31,7 @@ func TestTask_Success(t *testing.T) {
 	t.Run("GET Method", func(t *testing.T) {
 		task := &v1.Task{
 			Url:    server.URL,
-			Method: v1.HTTPMethod_HTTP_METHOD_GET,
+			Method: "GET",
 		}
 
 		queueOpts := QueueOpts{
@@ -40,7 +39,7 @@ func TestTask_Success(t *testing.T) {
 			Db:    db,
 		}
 
-		err := Task(context.Background(), queueOpts, task,1)
+		err := Task(context.Background(), queueOpts, task, "0")
 		if err != nil {
 			t.Fatalf("expected no error, got %v", err)
 		}
@@ -49,7 +48,7 @@ func TestTask_Success(t *testing.T) {
 	t.Run("Get Headers Method", func(t *testing.T) {
 		task := &v1.Task{
 			Url:    server.URL,
-			Method: v1.HTTPMethod_HTTP_METHOD_GET,
+			Method: "GET",
 			Headers: map[string]string{
 				"test": "test",
 			},
@@ -60,7 +59,7 @@ func TestTask_Success(t *testing.T) {
 			Db:    db,
 		}
 
-		err := Task(context.Background(), queueOpts, task,1)
+		err := Task(context.Background(), queueOpts, task, "1")
 		if err != nil {
 			t.Fatalf("expected no error, got %v", err)
 		}
@@ -76,7 +75,7 @@ func TestTask_Failure(t *testing.T) {
 
 	task := &v1.Task{
 		Url:    server.URL,
-		Method: v1.HTTPMethod_HTTP_METHOD_GET,
+		Method: "GET",
 	}
 
 	queueOpts := QueueOpts{
@@ -84,7 +83,7 @@ func TestTask_Failure(t *testing.T) {
 		Db:    nil,
 	}
 
-	err := Task(context.Background(), queueOpts, task,1)
+	err := Task(context.Background(), queueOpts, task, "2")
 	if err == nil {
 		t.Fatalf("expected error, got nil")
 	}
