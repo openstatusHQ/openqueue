@@ -18,17 +18,17 @@ CREATE TABLE IF NOT EXISTS task (
 	headers TEXT NOT NULL,
 	body TEXT,
 	url TEXT,
-	created_at INTEGER NOT NULL DEFAULT (unixepoch()),
-	scheduled_at INTEGER NOT NULL DEFAULT (unixepoch()),
-	updated_at INTEGER NOT NULL DEFAULT (unixepoch())
+	created_at INTEGER NOT NULL DEFAULT (unixepoch('subsec') * 1000),
+	scheduled_at INTEGER NOT NULL DEFAULT (unixepoch('subsec') * 1000),
+	updated_at INTEGER NOT NULL DEFAULT (unixepoch('subsec') * 1000)
 );
 
 CREATE TABLE IF NOT EXISTS task_execution (
 	id TEXT NOT NULL,
 	task_id TEXT NOT NULL,
 	status text NOT NULL,
-	created_at INTEGER NOT NULL DEFAULT (unixepoch()),
-	updated_at INTEGER NOT NULL DEFAULT (unixepoch()),
+	created_at INTEGER NOT NULL DEFAULT (unixepoch('subsec') * 1000),
+	updated_at INTEGER NOT NULL DEFAULT (unixepoch('subsec') * 1000),
   	FOREIGN KEY (task_id) REFERENCES task(id)
 );
 `
@@ -73,22 +73,6 @@ func CreateTask(ctx context.Context, db *sqlx.DB, task *Task) (string, error) {
 		return "", fmt.Errorf("failed to create task: %w", err)
 	}
 
-	newId, err := uuid.NewV7()
-	if err != nil {
-		tx.Rollback()
-		return "", fmt.Errorf("failed to generate uuid: %w", err)
-	}
-	jr := &TaskExecution{
-		TaskId: newId.String(),
-		Status: StatusPending,
-	}
-
-	_, err = tx.NamedExec("INSERT INTO task_execution (id, task_id, status) VALUES (:id, :task_id, :status)", jr)
-	if err != nil {
-		tx.Rollback()
-		return "", fmt.Errorf("failed to insert task_execution %w", err)
-	}
-
 	tx.Commit()
 
 	log.Ctx(ctx).Info().Msgf("Created task with id %s", id)
@@ -127,11 +111,45 @@ func AddTaskExecution(ctx context.Context, db *sqlx.DB, execution *TaskExecution
 		return "", fmt.Errorf("failed to insert task_execution %w", err)
 	}
 
+	tx.Commit()
+	return id.String(), nil
+}
+
+func UpdateTaskStatus(ctx context.Context, db *sqlx.DB, executionId string, status TaskStatus) error {
+	if db == nil {
+		return fmt.Errorf("failed to get database")
+	}
+
+	if executionId  == "" {
+		return fmt.Errorf("Invalid execution id")
+	}
+
+	tx := db.MustBegin()
+
+	_, err := tx.NamedExec("UPDATE task_execution SET status = :status WHERE id = :id", map[string]any{
+		"status": status,
+		"id":     executionId,
+	})
+
 	if err != nil {
-		tx.Rollback()
-		return "", fmt.Errorf("failed to get last insert id: %w", err)
+		return fmt.Errorf("failed to insert task_execution %w", err)
 	}
 
 	tx.Commit()
-	return id.String(), nil
+
+	return nil
+}
+
+func GetTaskStatus(ctx context.Context, db *sqlx.DB, id string) (TaskStatus, error) {
+
+	if db == nil {
+		return StatusUnknown, fmt.Errorf("failed to get database")
+	}
+	exec := &TaskExecution{}
+	err := db.Get(exec, "SELECT * FROM task_execution WHERE task_id = ? order by created_at desc limit 1", id)
+	if err != nil {
+		return StatusUnknown, fmt.Errorf("failed to get task: %w", err)
+	}
+
+	return exec.Status, nil
 }

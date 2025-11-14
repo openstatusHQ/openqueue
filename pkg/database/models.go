@@ -14,6 +14,7 @@ type Task struct {
 type TaskStatus string
 
 const (
+	StatusUnknown   TaskStatus = "unknown"
 	StatusPending   TaskStatus = "pending"
 	StatusRunning   TaskStatus = "running"
 	StatusCompleted TaskStatus = "completed"

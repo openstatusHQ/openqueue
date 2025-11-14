@@ -27,7 +27,6 @@ func (api *APIv1) CreateTask(ctx context.Context, req *connect.Request[v1.Create
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("queue not found"))
 	}
 
-
 	task := &database.Task{
 		Method:  req.Msg.GetTask().Method,
 		Headers: fmt.Sprintf("%v", req.Msg.GetTask().Headers),
