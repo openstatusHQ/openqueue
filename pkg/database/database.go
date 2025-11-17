@@ -120,7 +120,7 @@ func UpdateTaskStatus(ctx context.Context, db *sqlx.DB, executionId string, stat
 		return fmt.Errorf("failed to get database")
 	}
 
-	if executionId  == "" {
+	if executionId == "" {
 		return fmt.Errorf("Invalid execution id")
 	}
 

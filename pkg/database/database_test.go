@@ -37,10 +37,8 @@ func TestCreateTask(t *testing.T) {
 			t.Fatalf("Should not return id")
 		}
 
-
 	})
 	t.Run("create task ok ", func(t *testing.T) {
-
 
 		job := &Task{
 			Method:  "POST",
@@ -77,7 +75,6 @@ func TestCreateTask(t *testing.T) {
 
 		id, err := CreateTask(t.Context(), db, job)
 
-
 		if err != nil {
 			t.Fatalf("could not set up test")
 		}
@@ -88,16 +85,16 @@ func TestCreateTask(t *testing.T) {
 		})
 
 		if err != nil {
-			t.Fatalf("could not create task execution %v",err)
+			t.Fatalf("could not create task execution %v", err)
 		}
 
 		status, err := GetTaskStatus(t.Context(), db, id)
 		if err != nil {
 
-			t.Fatalf("could not get Task %v",err )
+			t.Fatalf("could not get Task %v", err)
 		}
 		if status != StatusPending {
-			t.Fatalf("Status should be equal to pending but got %s",status)
+			t.Fatalf("Status should be equal to pending but got %s", status)
 		}
 	})
 	t.Run("Get Task status with multiple execution  ", func(t *testing.T) {
@@ -110,7 +107,6 @@ func TestCreateTask(t *testing.T) {
 		}
 
 		id, err := CreateTask(t.Context(), db, job)
-
 
 		if err != nil {
 			t.Fatalf("could not set up test")
@@ -142,16 +138,16 @@ func TestCreateTask(t *testing.T) {
 		})
 
 		if err != nil {
-			t.Fatalf("could not create task execution %v",err)
+			t.Fatalf("could not create task execution %v", err)
 		}
 
 		status, err := GetTaskStatus(t.Context(), db, id)
 		if err != nil {
 
-			t.Fatalf("could not get Task %v",err )
+			t.Fatalf("could not get Task %v", err)
 		}
 		if status != StatusCompleted {
-			t.Fatalf("Status should be equal to completed but got %s",status)
+			t.Fatalf("Status should be equal to completed but got %s", status)
 		}
 	})
 
